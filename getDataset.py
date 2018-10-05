@@ -29,6 +29,7 @@ with ZipFile(file_name, 'r') as zip:
                 print("\t"+user)
                 curFile = zip.open(elem.filename)
                 
+                #line 1.. 5 are useless in this dataset
                 line = curFile.readline()
                 line = curFile.readline()
                 line = curFile.readline()
@@ -36,15 +37,14 @@ with ZipFile(file_name, 'r') as zip:
                 line = curFile.readline()
                 line = curFile.readline()
                 
-                count=5
-                while line:
+                count=0 #number of point
+                while line:    
                     line = curFile.readline()
                     line = line.decode('UTF-8')
                     if(line):
+                        count +=1
                         latitudine,longitudine,zero,altitudine,date,dateS,timeS= line.split(",")
                         
-                        count +=1
-                
                 print("\tcount: {}".format(count))
                 print("\t\t"+filename)
                 zip.close

@@ -55,7 +55,7 @@ with ZipFile(file_name, 'r') as zipfile:
                         pointList.append(e.Point(latitudine, longitudine, date))
                 
                 # print("\tcount: {}".format(count))
-                print("\t\t"+curFileName+"\n")
+                #print("\t\t"+curFileName+"\n")
 
                 curUserInList.add_detection(e.Detection(curFileName, pointList))
                 

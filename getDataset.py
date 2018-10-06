@@ -39,7 +39,6 @@ with ZipFile(file_name, 'r') as zipfile:
                     userList.append(curUserInList)
 
                 curFile = zipfile.open(elem.filename)
-
                 # line 1.. 5 are useless in this dataset
                 for i in range(5):
                     line = curFile.readline()
@@ -54,16 +53,17 @@ with ZipFile(file_name, 'r') as zipfile:
                         # count +=1
                         latitudine, longitudine, zero, altitudine, date, dateS, timeS = line.split(",")
                         pointList.append(e.Point(latitudine, longitudine, date))
-
+                
                 # print("\tcount: {}".format(count))
-                # print("\t\t"+curFileName+"\n")
+                print("\t\t"+curFileName+"\n")
 
                 curUserInList.add_detection(e.Detection(curFileName, pointList))
-                zipfile.close() # cambiare posizione di questa istruzione poichè da errore
+                
             # elif filename.endswith("labels.txt"):
             # print("\t\tlables")
             # else:
             # print("not my file")
+zipfile.close()
 #
 """
 for elem in userList:

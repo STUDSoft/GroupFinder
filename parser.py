@@ -1,12 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Oct  5 19:03:50 2018
-
-@author: roccodeb
-"""
-
-# importing required modules
 from zipfile import ZipFile
 from Entity.Point import Point
 from Entity.User import User
@@ -66,3 +57,4 @@ def get_dataset():
                 # else:
                 # print("not my file")
     zipfile.close()
+    return userlist

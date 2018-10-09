@@ -1,4 +1,4 @@
-class Detection(object):
+class Trajectory(object):
     def __init__(self, timestamp, pointlist=None):
         self.__timestamp = timestamp
         if pointlist is None:

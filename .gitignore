@@ -1,4 +1,4 @@
 *.zip
 .idea
-__pycache__/
-dataset.gfd
+__pycache__
+*.gfd

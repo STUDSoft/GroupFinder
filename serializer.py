@@ -1,12 +1,12 @@
 import pickle
 
 
-def save(obj):
-    with open('dataset.gfd', 'wb') as fp:
+def save(obj, filename):
+    with open(filename, "wb") as fp:
         pickle.dump(obj, fp)
 
 
-def read():
-    with open('dataset.gfd', 'rb') as fp:
+def read(filename):
+    with open(filename, "rb") as fp:
         obj = pickle.load(fp)
     return obj

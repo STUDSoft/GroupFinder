@@ -1,12 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Oct  5 19:03:50 2018
-
-@author: roccodeb
-"""
-
-# importing required modules
 from zipfile import ZipFile
 from Entity.Point import Point
 from Entity.User import User
@@ -23,13 +14,13 @@ def get_dataset():
     with ZipFile(file_name, 'r') as zipfile:
         # printing all the contents of the zip file
         for elem in zipfile.infolist():
-            if not (elem.is_dir()):
+            if not elem.is_dir():
                 # print("Directory")
                 # else:
                 filepath, filename = os.path.split(elem.filename)
                 filepath, trajectory = os.path.split(filepath)
                 filepath, user = os.path.split(filepath)
-                if filename.endswith(".plt") and not (filename.startswith("._")):
+                if filename.endswith(".plt") and not filename.startswith("._"):
                     # print("\t"+user)
                     curuserinlist = None
                     for itemUser in userlist:
@@ -66,3 +57,4 @@ def get_dataset():
                 # else:
                 # print("not my file")
     zipfile.close()
+    return userlist

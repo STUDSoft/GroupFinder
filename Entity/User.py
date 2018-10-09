@@ -1,10 +1,10 @@
 class User(object):
-    def __init__(self, identifier, detectionlist=None):
+    def __init__(self, identifier, trajectorylist=None):
         self.__identifier = identifier
-        if detectionlist is None:
-            self.__detectionlist = []
+        if trajectorylist is None:
+            self.__trajectorylist = []
         else:
-            self.__detectionlist = detectionlist
+            self.__trajectorylist = trajectorylist
 
     def set_identifier(self, identifier):
         self.__identifier = identifier
@@ -12,21 +12,21 @@ class User(object):
     def get_identifier(self):
         return self.__identifier
 
-    def set_detectionlist(self, detectionlist):
-        self.__detectionlist = detectionlist
+    def set_trajectorylist(self, trajectorylist):
+        self.__trajectorylist = trajectorylist
 
-    def get_detectionlist(self):
-        return self.__detectionlist
+    def get_trajectorylist(self):
+        return self.__trajectorylist
 
-    def add_detection(self, detection):
-        self.__detectionlist.append(detection)
+    def add_trajectory(self, trajectory):
+        self.__trajectorylist.append(trajectory)
 
-    def remove_detection(self, position=0):
+    def remove_trajectory(self, position=0):
         if position is 0:
-            del self.__detectionlist[len(self.__detectionlist) - 1]
+            del self.__trajectorylist[len(self.__trajectorylist) - 1]
         else:
-            del self.__detectionlist[position]
+            del self.__trajectorylist[position]
 
     def __str__(self):
-        stringlist = [str(e) for e in self.__detectionlist]
+        stringlist = [str(e) for e in self.__trajectorylist]
         return str(self.__identifier) + ":\n  " + "\n  ".join(stringlist) + "\n"

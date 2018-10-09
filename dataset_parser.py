@@ -1,7 +1,7 @@
 from zipfile import ZipFile
 from Entity.Point import Point
 from Entity.User import User
-from Entity.Detection import Detection
+from Entity.Trajectory import Trajectory
 import os
 import re
 
@@ -50,7 +50,7 @@ def get_dataset():
                     # print("\tcount: {}".format(count))
                     # print("\t\t"+curFileName+"\n")
 
-                    curuserinlist.add_detection(Detection(curfilename, pointlist))
+                    curuserinlist.add_trajectory(Trajectory(curfilename, pointlist))
 
                 # elif filename.endswith("labels.txt"):
                 # print("\t\tlables")

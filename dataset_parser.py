@@ -1,7 +1,7 @@
-from zipfile import ZipFile
-from Entity.Point import Point
-from Entity.User import User
-from Entity.Trajectory import Trajectory
+from zipfile import *
+from Classes.entities import Point, Trajectory, User
+from Classes.side import Coordinates
+from datetime import datetime
 import os
 import re
 
@@ -44,9 +44,11 @@ def get_dataset():
                         line = line.decode('UTF-8')
                         if line:
                             # count +=1
-                            latitudine, longitudine, zero, altitudine, date, dates, times = line.split(",")
-                            pointlist.append(Point(latitudine, longitudine, date))
-
+                            latitudine, longitudine, _, _, _, dates, times = line.split(",")
+                            timestamp = dates + " " + times
+                            timestamp = datetime.strptime(str(timestamp), "%Y-%m-%d %H:%M:%S\r\n")
+                            pointlist.append(
+                                Point(Coordinates(float(latitudine), float(longitudine)), timestamp))
                     # print("\tcount: {}".format(count))
                     # print("\t\t"+curFileName+"\n")
 

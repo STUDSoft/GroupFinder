@@ -1,13 +1,14 @@
 from dataset_parser import *
-from serializer import *
+from staypoint_detector import staypoint_detection
 
-try:
-    userlist = read("dataset.gfd")
-    print("Welcome back!")
-except FileNotFoundError:
-    print(
-        "Welcome! This is your first time here, so we'll need a couple of minutes to load your "
-        "dataset.\nPlease wait...")
-    userlist = get_dataset()
-    save(userlist, "dataset.gfd")
-    print("Finished! Have fun!")
+userlist = get_dataset()
+print("Dataset extracted")
+sp = []
+for user in userlist:
+    trajectorylist = user.get_trajectorylist()
+    for trajectory in trajectorylist:
+        sp += staypoint_detection(trajectory.get_pointlist(), 200, 30)
+
+print("Staypoints detected")
+for sp in sp:
+    print(sp)

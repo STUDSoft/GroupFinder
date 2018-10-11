@@ -1,5 +1,5 @@
 from dataset_parser import *
-from clustering import staypoint_detection
+from staypoint_detector import staypoint_detection
 
 userlist = get_dataset()
 print("Dataset extracted")

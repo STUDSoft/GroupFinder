@@ -125,3 +125,23 @@ class User(object):
     def __str__(self):
         stringlist = [str(e) for e in self.__trajectorylist]
         return str(self.__identifier) + ":\n  " + "\n  ".join(stringlist) + "\n"
+
+
+class Cluster(object):
+    NOISE = 0
+
+    def __init__(self, cluster_id):
+        self.__cluster_id = cluster_id
+        self.__objects = []
+
+    def get_objects(self):
+        return self.__objects
+
+    def add_object(self, obj):
+        self.__objects.append(obj)
+
+    def get_cluster_id(self):
+        return self.__cluster_id
+
+    def set_cluster_id(self, cluster_id):
+        self.__cluster_id = cluster_id

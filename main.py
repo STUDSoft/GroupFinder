@@ -25,4 +25,6 @@ else:
     sp = load_dataset(dataset_file)
     print("Dataset loaded.")
 
-# hdbscan(sp, min_pts, 'haversine')
+print("HDBSCAN going on...")
+hdbscan(sp, min_pts, 'haversine')
+print("Clusters extracted-")

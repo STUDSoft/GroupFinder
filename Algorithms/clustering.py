@@ -1,7 +1,32 @@
 from Classes.side import StayPointClust
-from Algorithms.point_utilities import distance
+from Algorithms.point_utilities import haversine_distance
 from Classes.queue import PriorityQueue
 from Classes.entities import Cluster
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import time
+import hdbscan as hdbscn
+
+
+def plot_clusters(data, algorithm, args, kwds):
+    start_time = time.time()
+    labels = algorithm(*args, **kwds).fit_predict(data)
+    end_time = time.time()
+    palette = sns.color_palette('deep', np.unique(labels).max() + 1)
+    colors = [palette[x] if x >= 0 else (0.0, 0.0, 0.0) for x in labels]
+    plot_kwds = {'alpha': 0.25, 's': 80, 'linewidths': 0}
+    plt.scatter(data.T[0], data.T[1], c=colors, **plot_kwds)
+    frame = plt.gca()
+    frame.axes.get_xaxis().set_visible(False)
+    frame.axes.get_yaxis().set_visible(False)
+    plt.title('Clusters found by {}'.format(str(algorithm.__name__)), fontsize=24)
+    plt.text(-0.5, 0.7, 'Clustering took {:.2f} s'.format(end_time - start_time), fontsize=14)
+    plt.show()
+
+
+def hdbscan(data, min_pts, metric):
+    plot_clusters(data, hdbscn.HDBSCAN, (), {'min_cluster_size': min_pts, 'metric': metric})
 
 
 def set_points_to_unproc(set_of_objects):
@@ -44,7 +69,7 @@ def update(order_seeds, neighbors, center_obj):
     c_dist = center_obj.get_core_dist()
     for o in neighbors:
         if not o.get_processed():
-            new_r_dist = max(c_dist, distance(center_obj, o))
+            new_r_dist = max(c_dist, haversine_distance(center_obj, o))
             if o.get_reach_dist() is None:
                 o.set_reach_dist(new_r_dist)
                 order_seeds.push(o, new_r_dist)
@@ -59,7 +84,7 @@ def update(order_seeds, neighbors, center_obj):
 def get_neighbors(set_of_objects, obj, eps):
     neighbors = []
     for o in set_of_objects:
-        if distance(o, obj) <= eps:
+        if haversine_distance(o, obj) <= eps:
             neighbors.append(o)
     return neighbors
 

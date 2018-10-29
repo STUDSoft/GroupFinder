@@ -1,7 +1,7 @@
 from math import sin, cos, asin, sqrt, radians
 
 
-def distance(point_a, point_b):
+def haversine_distance(point_a, point_b):
     lon1, lat1, lon2, lat2 = map(radians, [point_a.get_longitude(), point_a.get_latitude(), point_b.get_longitude(),
                                            point_b.get_latitude()])
     dlon = lon2 - lon1

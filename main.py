@@ -1,35 +1,28 @@
 from Algorithms.dataset_parser import get_dataset
 from Algorithms.staypoint_detector import staypoint_detection
-from Algorithms.clustering import optics, extract_dbscan_clustering
-from Classes.entities import Cluster
+from Algorithms.clustering import hdbscan
+from File.serializer import save_dataset, load_dataset
+from pathlib import Path
 
-print("Extracting dataset...")
-userlist = get_dataset()
-print("Dataset extracted.")
-print("Detecting staypoints...")
-sp = []
-for user in userlist:
-    trajectorylist = user.get_trajectorylist()
-    for trajectory in trajectorylist:
-        sp += staypoint_detection(trajectory.get_pointlist(), 200, 30)
-
-print("Staypoints detected.")
-
-eps = 500
 min_pts = 2
 
-print("Optics going on...")
-opt = optics(sp, eps, min_pts)
-print("Optics has finished running.")
+dataset_file = "File/data.npy"
 
-print("Clustering points...")
-clusters = extract_dbscan_clustering(opt, eps)
-print("Clusters extracted")
+if not Path(dataset_file).is_file():
+    print("Extracting dataset...")
+    userlist = get_dataset()
+    print("Dataset extracted.")
 
-for c in clusters:
-    if c.get_cluster_id() is Cluster.NOISE:
-        print("Noise:")
-    else:
-        print("Cluster " + str(c.get_cluster_id()))
-    for p in c.get_objects():
-        print(p)
+    print("Detecting staypoints...")
+    sp = staypoint_detection(userlist, 200, 30)
+    print("Staypoints detected.")
+
+    print("Saving dataset...")
+    save_dataset(sp, dataset_file)
+    print("Dataset saved")
+else:
+    print("Loading dataset...")
+    sp = load_dataset(dataset_file)
+    print("Dataset loaded.")
+
+# hdbscan(sp, min_pts, 'haversine')

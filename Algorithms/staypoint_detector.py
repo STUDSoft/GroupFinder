@@ -1,4 +1,3 @@
-from Classes.entities import StayPoint
 from Classes.side import Coordinates
 from Algorithms.point_utilities import haversine_distance
 import numpy as np
@@ -23,7 +22,6 @@ def staypoint_detection(userlist, dist_threh, time_threh):
                             s = [coord.get_latitude(), coord.get_longitude()]
                             s = np.array(s)
                             sp.append(s)
-                            # s = StayPoint(coord, p[i].get_timestamp(), p[j].get_timestamp())
                         i = j
                         break
                     j += 1

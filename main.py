@@ -27,4 +27,4 @@ else:
 
 print("HDBSCAN going on...")
 hdbscan(sp, min_pts, 'haversine')
-print("Clusters extracted-")
+print("Clusters extracted.")

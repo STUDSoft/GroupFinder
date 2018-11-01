@@ -101,3 +101,34 @@ class User(object):
     def __str__(self):
         stringlist = [str(e) for e in self.__trajectorylist]
         return str(self.__identifier) + ":\n  " + "\n  ".join(stringlist) + "\n"
+
+
+class StayPoint(Point):
+    def __init__(self, coordinates, user_identifier, arv_time=None, leav_time=None):
+        self.__user_identifier = user_identifier
+        self.__arv_time = arv_time
+        self.__leav_time = leav_time
+        super(StayPoint, self).__init__(coordinates)
+
+    def get_user_identifier(self):
+        return self.__user_identifier
+
+    def set_user_identifier(self, user_identifier):
+        self.__user_identifier = user_identifier
+
+    def get_arv_time(self):
+        return self.__arv_time
+
+    def set_arv_time(self, arv_time):
+        self.__arv_time = arv_time
+
+    def get_leav_time(self):
+        return self.__leav_time
+
+    def set_leav_time(self, leav_time):
+        self.__leav_time = leav_time
+
+    def __repr__(self):
+        return str(super(StayPoint, self).get_coordinates().get_latitude()) + ", " \
+               + str(super(StayPoint, self).get_coordinates().get_longitude()) \
+               + " arv at " + str(self.__arv_time) + " left at " + str(self.__leav_time)

@@ -1,10 +1,12 @@
 from Classes.side import Coordinates
 from Algorithms.point_utilities import haversine_distance
+from Classes.entities import StayPoint
 import numpy as np
 
 
 def staypoint_detection(userlist, dist_threh, time_threh):
     sp = []
+    staypoints = []
     for user in userlist:
         trajectorylist = user.get_trajectorylist()
         for trajectory in trajectorylist:
@@ -20,13 +22,15 @@ def staypoint_detection(userlist, dist_threh, time_threh):
                         if delta_t > time_threh:
                             coord = compute_mean_coord(p, i, j)
                             s = [coord.get_latitude(), coord.get_longitude()]
+                            stp = StayPoint(coord, user.get_identifier(), p[i].get_timestamp(), p[j].get_timestamp())
                             s = np.array(s)
                             sp.append(s)
+                            staypoints.append(stp)
                         i = j
                         break
                     j += 1
                 i += 1
-    return np.array(sp)
+    return np.array(sp), staypoints
 
 
 def compute_mean_coord(p, i, j):

@@ -1,30 +1,46 @@
 from Algorithms.dataset_parser import get_dataset
 from Algorithms.staypoint_detector import staypoint_detection
-from Algorithms.clustering import hdbscan
-from File.serializer import save_dataset, load_dataset
+from Algorithms.clustering import hdbscan_clust
+from File.serializer import save, load
 from pathlib import Path
+import numpy as np
 
-min_pts = 2
+min_pts = 10
 
-dataset_file = "File/data.npy"
+clusterable_sp_file = "File/clusterable_sp.npy"
+sp_file = "File/sp.npy"
 
-if not Path(dataset_file).is_file():
+if not Path(clusterable_sp_file).is_file() and not Path(sp_file).is_file():
     print("Extracting dataset...")
     userlist = get_dataset()
     print("Dataset extracted.")
 
     print("Detecting staypoints...")
-    sp = staypoint_detection(userlist, 200, 30)
+    sp, staypoints = staypoint_detection(userlist, 200, 30)
     print("Staypoints detected.")
 
-    print("Saving dataset...")
-    save_dataset(sp, dataset_file)
-    print("Dataset saved")
-else:
-    print("Loading dataset...")
-    sp = load_dataset(dataset_file)
-    print("Dataset loaded.")
+    print("Saving staypoints...")
+    save(staypoints, sp_file)
+    print("Staypoints saved.")
 
+    print("Saving clusterable staypoints...")
+    save(sp, clusterable_sp_file)
+    print("Clusterable staypoints saved.")
+
+
+else:
+    print("Loading staypoints...")
+    staypoints = load(sp_file)
+    print("Staypoints, loaded.")
+
+    print("Loading clusterable staypoints...")
+    sp = load(clusterable_sp_file)
+    print("Clusterable staypoints loaded.")
+
+'''
 print("HDBSCAN going on...")
-hdbscan(sp, min_pts, 'haversine')
+clusterer = hdbscan_clust(sp, min_pts, 'haversine')
 print("Clusters extracted.")
+
+labels = clusterer.labels_.tolist()
+'''

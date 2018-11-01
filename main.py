@@ -3,14 +3,13 @@ from Algorithms.staypoint_detector import staypoint_detection
 from Algorithms.clustering import hdbscan_clust
 from File.serializer import save, load
 from pathlib import Path
-import numpy as np
 
 min_pts = 10
 
 clusterable_sp_file = "File/clusterable_sp.npy"
 sp_file = "File/sp.npy"
 
-if not Path(clusterable_sp_file).is_file() and not Path(sp_file).is_file():
+if not Path(clusterable_sp_file).is_file() or not Path(sp_file).is_file():
     print("Extracting dataset...")
     userlist = get_dataset()
     print("Dataset extracted.")
@@ -37,10 +36,8 @@ else:
     sp = load(clusterable_sp_file)
     print("Clusterable staypoints loaded.")
 
-'''
 print("HDBSCAN going on...")
 clusterer = hdbscan_clust(sp, min_pts, 'haversine')
 print("Clusters extracted.")
 
 labels = clusterer.labels_.tolist()
-'''

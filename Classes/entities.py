@@ -32,30 +32,6 @@ class Point(object):
             self.__timestamp)
 
 
-class StayPoint(Point):
-    def __init__(self, coordinates, arv_time=None, leav_time=None):
-        self.__arv_time = arv_time
-        self.__leav_time = leav_time
-        super(StayPoint, self).__init__(coordinates)
-
-    def get_arv_time(self):
-        return self.__arv_time
-
-    def set_arv_time(self, arv_time):
-        self.__arv_time = arv_time
-
-    def get_leav_time(self):
-        return self.__leav_time
-
-    def set_leav_time(self, leav_time):
-        self.__leav_time = leav_time
-
-    def __repr__(self):
-        return str(super(StayPoint, self).get_coordinates().get_latitude()) + ", " \
-               + str(super(StayPoint, self).get_coordinates().get_longitude()) \
-               + " arv at " + str(self.__arv_time) + " left at " + str(self.__leav_time)
-
-
 class Trajectory(object):
     def __init__(self, timestamp, pointlist=None):
         self.__timestamp = timestamp
@@ -127,21 +103,33 @@ class User(object):
         return str(self.__identifier) + ":\n  " + "\n  ".join(stringlist) + "\n"
 
 
-class Cluster(object):
-    NOISE = 0
+class StayPoint(Point):
+    def __init__(self, coordinates, user_identifier, arv_time=None, leav_time=None):
+        self.__user_identifier = user_identifier
+        self.__arv_time = arv_time
+        self.__leav_time = leav_time
+        super(StayPoint, self).__init__(coordinates)
 
-    def __init__(self, cluster_id):
-        self.__cluster_id = cluster_id
-        self.__objects = []
+    def get_user_identifier(self):
+        return self.__user_identifier
 
-    def get_objects(self):
-        return self.__objects
+    def set_user_identifier(self, user_identifier):
+        self.__user_identifier = user_identifier
 
-    def add_object(self, obj):
-        self.__objects.append(obj)
+    def get_arv_time(self):
+        return self.__arv_time
 
-    def get_cluster_id(self):
-        return self.__cluster_id
+    def set_arv_time(self, arv_time):
+        self.__arv_time = arv_time
 
-    def set_cluster_id(self, cluster_id):
-        self.__cluster_id = cluster_id
+    def get_leav_time(self):
+        return self.__leav_time
+
+    def set_leav_time(self, leav_time):
+        self.__leav_time = leav_time
+
+    def __repr__(self):
+        return str(self.__user_identifier) + " at " + str(
+            super(StayPoint, self).get_coordinates().get_latitude()) + ", " \
+               + str(super(StayPoint, self).get_coordinates().get_longitude()) \
+               + " arv at " + str(self.__arv_time) + " left at " + str(self.__leav_time)

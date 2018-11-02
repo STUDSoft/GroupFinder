@@ -129,6 +129,7 @@ class StayPoint(Point):
         self.__leav_time = leav_time
 
     def __repr__(self):
-        return str(super(StayPoint, self).get_coordinates().get_latitude()) + ", " \
+        return str(self.__user_identifier) + " at " + str(
+            super(StayPoint, self).get_coordinates().get_latitude()) + ", " \
                + str(super(StayPoint, self).get_coordinates().get_longitude()) \
                + " arv at " + str(self.__arv_time) + " left at " + str(self.__leav_time)

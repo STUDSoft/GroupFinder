@@ -133,3 +133,78 @@ class StayPoint(Point):
             super(StayPoint, self).get_coordinates().get_latitude()) + ", " \
                + str(super(StayPoint, self).get_coordinates().get_longitude()) \
                + " arv at " + str(self.__arv_time) + " left at " + str(self.__leav_time)
+
+
+class Sequence(object):
+    def __init__(self, user_id):
+        self.__nodes = []
+        self.__user_id = user_id
+
+    def has_nodes(self):
+        return len(self.__nodes) != 0
+
+    def get_nodes(self):
+        return self.__nodes
+
+    def set_nodes(self, nodes):
+        self.__nodes = nodes
+
+    def add_node(self, node):
+        self.__nodes.append(node)
+
+    def delete_node(self, node):
+        self.__nodes.remove(node)
+
+    def get_user_id(self):
+        return self.__user_id
+
+    def set_user_id(self, user_id):
+        self.__user_id = user_id
+
+    def get_latest_node(self):
+        return self.__nodes[len(self.__nodes) - 1]
+
+    def __repr__(self):
+        return "User " + str(self.__user_id) + " sequence:\n" + str(self.__nodes[:]) + "\n"
+
+
+class Node(object):
+    def __init__(self, clust_id, time_to, num_sp, leav_time):
+        self.__time_to = time_to
+        self.__clust_id = clust_id
+        self.__num_sp = num_sp
+        self.__leav_time = leav_time
+
+    def add_staypoint(self):
+        self.__num_sp += 1
+
+    def remove_staypoint(self):
+        self.__num_sp -= 1
+
+    def get_num_staypoints(self):
+        return self.__num_sp
+
+    def set_num_staypoints(self, num_sp):
+        self.__num_sp = num_sp
+
+    def get_clust_id(self):
+        return self.__clust_id
+
+    def set_clust_id(self, clust_id):
+        self.__clust_id = clust_id
+
+    def get_time_to(self):
+        return self.__time_to
+
+    def set_time_to(self, time_to):
+        self.__time_to = time_to
+
+    def set_leav_time(self, leav_time):
+        self.__leav_time = leav_time
+
+    def get_leav_time(self):
+        return self.__leav_time
+
+    def __repr__(self):
+        return "Cluster " + str(self.__clust_id) + " arv in " + str(self.get_time_to()) + " hours and left at " + str(
+            self.get_leav_time()) + " for a total of " + str(self.get_num_staypoints()) + " staypoints.\n"

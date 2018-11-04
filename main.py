@@ -3,9 +3,9 @@ from Algorithms.staypoint_detector import staypoint_detection
 from Algorithms.clustering import hdbscan_clust
 from File.serializer import save, load
 from pathlib import Path
-from Algorithms.sequence_extractor import extract_sequencies
+from Algorithms.sequence_manager import extract_sequencies, get_user_seq_pos
 
-min_pts = 10
+min_pts = 2
 
 clusterable_sp_file = "File/clusterable_sp.npy"
 sp_file = "File/sp.npy"
@@ -16,7 +16,7 @@ if not Path(clusterable_sp_file).is_file() or not Path(sp_file).is_file():
     print("Dataset extracted.")
 
     print("Detecting staypoints...")
-    sp, staypoints = staypoint_detection(userlist, 500, 1)
+    sp, staypoints = staypoint_detection(userlist, 200, 30)
     print("Staypoints detected.")
 
     print("Saving staypoints...")
@@ -42,6 +42,8 @@ print("Clusters extracted.")
 
 labels = clusterer.labels_.tolist()
 
+print("Extracting sequencies...")
 seq = extract_sequencies(staypoints, labels)
+print("Sequencies extracted.")
 
-print(seq[:])
+print(seq)

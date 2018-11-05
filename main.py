@@ -3,7 +3,8 @@ from Algorithms.staypoint_detector import staypoint_detection
 from Algorithms.clustering import hdbscan_clust
 from File.serializer import save, load
 from pathlib import Path
-from Algorithms.sequence_manager import extract_sequencies, get_user_seq_pos, sequence_matching
+from Algorithms.sequence_manager import extract_sequencies, sequence_matching
+from Algorithms.point_utilities import get_number_of_sp_per_user
 
 min_pts = 2
 
@@ -46,24 +47,23 @@ print("Extracting sequencies...")
 seq = extract_sequencies(staypoints, labels)
 print("Sequencies extracted.")
 
-print(seq)
-
+num_sp = get_number_of_sp_per_user(staypoints, 182)
 
 print("Calcolo similarita tra due utenti")
-l=0
-k=0
-while l is 0 and k<len(seq)-1:
-    print("Confronto " + str(k) +" len: " + str(len(seq[k].get_nodes())) + " con:")
-    i=k+1
-    while l is 0 and i<len(seq):
-        print("\t " + str(i) +" len: " + str(len(seq[i].get_nodes())) )
+l = 0
+k = 0
+while l is 0 and k < len(seq) - 1:
+    print("Confronto " + str(k) + " len: " + str(len(seq[k].get_nodes())) + " con:")
+    i = k + 1
+    while l is 0 and i < len(seq):
+        print("\t " + str(i) + " len: " + str(len(seq[i].get_nodes())))
         if i is not k:
-            match= sequence_matching(seq[k], seq[i], 4, 10)
+            match = sequence_matching(seq[k], seq[i], 4, 10)
         else:
-            match=set()
-        l=len(match)
-        i+=1
-    k+=1
+            match = set()
+        l = len(match)
+        i += 1
+    k += 1
 for m in match:
     print(m)
 print(len(match))

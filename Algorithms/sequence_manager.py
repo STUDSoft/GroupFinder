@@ -81,7 +81,7 @@ def seq1_in_seq2(seq1, seq2, eps):
 
     for i in range(len(node_s2)):
         if node_s1[0].get_clust_id() is node_s2[i].get_clust_id() and len(node_s1) <= (len(node_s2) - i):
-            b1 = False
+            b1 = False #segnala se non cercare la sequenza (False=cerca, True=non cercare)
             j = 1
             n = i
             while j < len(node_s1) and not b1:
@@ -101,6 +101,10 @@ def seq1_in_seq2(seq1, seq2, eps):
                 if b1:
                     j += 1
                     b1 = False
+                else:
+                    #se si e' usciti dal ciclo e non si e' trovata la sequnenza
+                    #o una sua continuazione, e' inutile continuare a cercare
+                    b1=True
 
             if j is len(node_s1):
                 return True
@@ -110,13 +114,99 @@ def seq1_in_seq2(seq1, seq2, eps):
 
 def extend_sequence(seq, time_thr, eps, seq1, seq2, extended_set):
     '''
+    eps e' usato come errore per riconoscere un passo simile
+    time_thr e' usato per considerare un passo come successore di una sequenza
     A partire da seq, cerca in seq1 un modo per espanderla
         Se lo trovi verifica che sia presente in seq2
         Se viene trovato, inseriscilo in extended_set
     Restituisci extended_set
     '''
-    return set()
+    nodes_seq=seq.get_nodes()
+    nodes_seq1=seq1.get_nodes()
+    
+    i=0
+    print("\nRicerca seq in seq1")
+    while i< ( len(nodes_seq1) - len(nodes_seq) ):
+        #cerca l'inizio di seq in seq1
+        if nodes_seq[0].get_clust_id is nodes_seq[i].get_clust_id:
+            #verifica di aver trovato seq, come la funzione seq1_in_seq2()
+            b1=False #segnala se non cercare la sequenza (False=cerca, True=non cercare)
+            j = 1
+            n = i #n e' da quale punto cercare il nodo successivo
+            while j < len(nodes_seq) and not b1:
+                k = n + 1
+                tot_time = nodes_seq1[k].get_time_to()
+
+                while k < len(nodes_seq1) and (
+                        tot_time >= (nodes_seq[j].get_time_to() - eps) or tot_time <= (
+                        nodes_seq[j].get_time_to() + eps)) and not b1:
+                    if nodes_seq1[k].get_clust_id() is nodes_seq[j].get_clust_id():
+                        b1 = True
+                        n = k
+                    else:
+                        k += 1
+                        tot_time += nodes_seq1[k].get_time_to()
+
+                if b1:
+                    j += 1
+                    b1 = False
+                else:
+                    #se si e' usciti dal ciclo e non si e' trovata la sequnenza
+                    #o una sua continuazione, e' inutile continuare a cercare
+                    b1=True
+                    
+            if j is len(nodes_seq):
+                #espandi la sequenza seq
+                print("\nTrovata una sequenza, espandendo...")
+                n +=1
+                tot_time = nodes_seq1[n].get_time_to()
+                
+                while n < len(nodes_seq1) and tot_time <= time_thr:
+                    #copia seq
+                    exp_seq= Sequence()
+                    for node in nodes_seq:
+                        tmp_node=Node( node.get_clust_id(), node.get_time_to(), node.get_num_staypoints(), node.get_leav_time() )
+                        exp_seq.add_node(tmp_node)
+                    #espandi
+                    new_node=Node( nodes_seq1[n].get_clust_id(), nodes_seq1[n].get_time_to(), 
+                                  nodes_seq1[n].get_num_staypoints(), nodes_seq1[n].get_leav_time() )
+                    exp_seq.add_node(new_node)
+                    #controlla che sia in seq2, se si aggiungi
+                    if seq1_in_seq2(exp_seq, seq2, eps):
+                        extended_set.add(exp_seq)
+                    #cerca altre sequenze
+                    n+= 1
+                    tot_time += nodes_seq1[n].get_time_to()
+                
+        i +=1 #incrementa il primo while
+    
+    return extended_set()
 
 
 def prune_sequence(sequence_set, extended_set):
-    return set()
+    """
+    elimina le sequenze di sequence_set che sono incluse nelle sequenze di extended_set
+    """
+    tmp_set= set()
+    print("\nInizio pruning")
+    for seq in sequence_set:
+        #se una sotto-sequenza e' trovata viene ignorata, altrimenti e' aggiunta al set temporaneo
+        found=False
+        for ext in extended_set:
+            if seq1_in_seq2(seq, ext, 0): #eps e' 0 perche' le sequenze sono identiche
+                found=True
+                break
+        if not found:
+            tmp_set.add(seq)
+    print("\nPruning effettuato")
+    #alla fine aggiungi tutto il set esteso, si puo' includere nel ciclo precedente
+    for ext in extended_set:
+        tmp_set.add(ext)
+    return tmp_set
+
+
+
+
+
+
+

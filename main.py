@@ -3,7 +3,8 @@ from Algorithms.staypoint_detector import staypoint_detection
 from Algorithms.clustering import hdbscan_clust
 from File.serializer import save, load
 from pathlib import Path
-from Algorithms.sequence_manager import extract_sequencies, get_user_seq_pos
+from Algorithms.sequence_manager import extract_sequencies
+from GUI.gui import GroupFinderApp
 
 min_pts = 2
 
@@ -47,3 +48,6 @@ seq = extract_sequencies(staypoints, labels)
 print("Sequencies extracted.")
 
 print(seq)
+
+if __name__ == '__main__':
+    GroupFinderApp().run()

@@ -2,7 +2,6 @@ from Classes.entities import Sequence, Node
 
 
 # eps errore di tempo per sequenze simili
-# soglia per considerare due nodi consecutivi come parte di una sequenza
 def sequence_matching(seq1, seq2, max_length, eps):
     # crea le sequenze di lunghezza 1, poi rimuove quelle non presenti in seq2
     temp_set = one_length_seq_set(seq1)
@@ -27,31 +26,34 @@ def extract_sequencies(staypoints, clusters):
     sequencies = []
     for i in range(len(staypoints)):
         pos = get_user_seq_pos(sequencies, staypoints[i].get_user_identifier())
-        if pos is None:
+        if pos is None:#if the user does not have a sequence in the array, it is created
             new_user_seq = Sequence(staypoints[i].get_user_identifier())
-            if clusters[i] is not -1:
+            if clusters[i] is not -1:#checks for noise
                 node = Node(clusters[i], 0, 1, staypoints[i].get_leav_time())
                 new_user_seq.add_node(node)
             sequencies.append(new_user_seq)
         else:
-            if sequencies[pos].has_nodes():
+            if sequencies[pos].has_nodes():#a user can have a sequence with no nodes
                 if clusters[i] is sequencies[pos].get_latest_node().get_clust_id():
                     sequencies[pos].get_latest_node().add_staypoint()
                     sequencies[pos].get_latest_node().set_leav_time(staypoints[i].get_leav_time())
                 else:
-                    if clusters[i] is not -1:
+                    if clusters[i] is not -1:#checks for noise
                         time_diff = staypoints[i].get_arv_time() - sequencies[pos].get_latest_node().get_leav_time()
                         time_diff_in_hours = time_diff.total_seconds() / 3600
                         node = Node(clusters[i], time_diff_in_hours, 1, staypoints[i].get_leav_time())
                         sequencies[pos].add_node(node)
             else:
-                if clusters[i] is not -1:
+                if clusters[i] is not -1:#checks for noise
                     node = Node(clusters[i], 0, 1, staypoints[i].get_leav_time())
                     sequencies[pos].add_node(node)
     return sequencies
 
 
 def get_user_seq_pos(sequencies, user_id):
+    """
+    Searches wheter a user has already a sequence
+    """
     i = 0
     while i < len(sequencies):
         if sequencies[i].get_user_id() is user_id:
@@ -66,7 +68,8 @@ def one_length_seq_set(seq):
     for i in range(len(nodes) - 1):
         node = nodes[i]
         j = i + 1
-        tot_time = nodes[j].get_time_to()
+        if(j < len(nodes)):
+            tot_time = nodes[j].get_time_to()
         while j < len(nodes):
             node_j = Node(nodes[j].get_clust_id(), tot_time, nodes[j].get_num_staypoints(), nodes[j].get_leav_time())
             s = Sequence()
@@ -92,17 +95,18 @@ def seq1_in_seq2(seq1, seq2, eps):
             minimum += [int(min(node_s1[0].get_num_staypoints(), node_s2[n].get_num_staypoints()))]
             while j < len(node_s1) and not b1:
                 k = n + 1
-                tot_time = node_s2[k].get_time_to()
-
-                while k < len(node_s2) and not b1:
-                    if node_s2[k].get_clust_id() is node_s1[j].get_clust_id() and eps >= abs(
-                            tot_time - node_s1[j].get_time_to()):
-                        b1 = True
-                        n = k
-                    else:
-                        k += 1
-                        if k < len(node_s2):
-                            tot_time += node_s2[k].get_time_to()
+                if(k < len(node_s2)):
+                    tot_time = node_s2[k].get_time_to()
+    
+                    while k < len(node_s2) and not b1:
+                        if node_s2[k].get_clust_id() is node_s1[j].get_clust_id() and eps >= abs(
+                                tot_time - node_s1[j].get_time_to()):
+                            b1 = True
+                            n = k
+                        else:
+                            k += 1
+                            if k < len(node_s2):
+                                tot_time += node_s2[k].get_time_to()
 
                 if b1:
                     minimum += [int(min(node_s1[j].get_num_staypoints(), node_s2[n].get_num_staypoints()))]
@@ -144,17 +148,18 @@ def extend_sequence(seq, eps, seq1, seq2, extended_set):
             n = i  # n e' da quale punto cercare il nodo successivo
             while j < len(nodes_seq) and not b1:
                 k = n + 1
-                tot_time = nodes_seq1[k].get_time_to()
-
-                while k < len(nodes_seq1) and not b1:
-                    if nodes_seq1[k].get_clust_id() is nodes_seq[j].get_clust_id() and eps >= abs(
-                            tot_time - nodes_seq[j].get_time_to()):
-                        b1 = True
-                        n = k
-                    else:
-                        k += 1
-                        if k < len(nodes_seq1):
-                            tot_time += nodes_seq1[k].get_time_to()
+                if(k < len(nodes_seq1)):
+                    tot_time = nodes_seq1[k].get_time_to()
+    
+                    while k < len(nodes_seq1) and not b1:
+                        if nodes_seq1[k].get_clust_id() is nodes_seq[j].get_clust_id() and eps >= abs(
+                                tot_time - nodes_seq[j].get_time_to()):
+                            b1 = True
+                            n = k
+                        else:
+                            k += 1
+                            if k < len(nodes_seq1):
+                                tot_time += nodes_seq1[k].get_time_to()
 
                 if b1:
                     j += 1
@@ -167,26 +172,27 @@ def extend_sequence(seq, eps, seq1, seq2, extended_set):
             if j is len(nodes_seq):
                 # espandi la sequenza seq
                 n += 1
-                tot_time = nodes_seq1[n].get_time_to()
-
-                while n < len(nodes_seq1):
-                    # copia seq
-                    exp_seq = Sequence()
-                    for node in nodes_seq:
-                        tmp_node = Node(node.get_clust_id(), node.get_time_to(), node.get_num_staypoints(),
-                                        node.get_leav_time())
-                        exp_seq.add_node(tmp_node)
-                    # espandi
-                    new_node = Node(nodes_seq1[n].get_clust_id(), nodes_seq1[n].get_time_to(),
-                                    nodes_seq1[n].get_num_staypoints(), nodes_seq1[n].get_leav_time())
-                    exp_seq.add_node(new_node)
-                    # controlla che sia in seq2, se si aggiungi
-                    if seq1_in_seq2(exp_seq, seq2, eps):
-                        extended_set.add(exp_seq)
-                    # cerca altre sequenze
-                    n += 1
-                    if n < len(nodes_seq1):
-                        tot_time += nodes_seq1[n].get_time_to()
+                if(n < len(nodes_seq1)):
+                    tot_time = nodes_seq1[n].get_time_to()
+    
+                    while n < len(nodes_seq1):
+                        # copia seq
+                        exp_seq = Sequence()
+                        for node in nodes_seq:
+                            tmp_node = Node(node.get_clust_id(), node.get_time_to(), node.get_num_staypoints(),
+                                            node.get_leav_time())
+                            exp_seq.add_node(tmp_node)
+                        # espandi
+                        new_node = Node(nodes_seq1[n].get_clust_id(), nodes_seq1[n].get_time_to(),
+                                        nodes_seq1[n].get_num_staypoints(), nodes_seq1[n].get_leav_time())
+                        exp_seq.add_node(new_node)
+                        # controlla che sia in seq2, se si aggiungi
+                        if seq1_in_seq2(exp_seq, seq2, eps):
+                            extended_set.add(exp_seq)
+                        # cerca altre sequenze
+                        n += 1
+                        if n < len(nodes_seq1):
+                            tot_time += nodes_seq1[n].get_time_to()
 
         i += 1  # incrementa il primo while
 

@@ -4,7 +4,6 @@ from Classes.side import Coordinates
 from datetime import datetime
 import os
 import re
-from datetime import timedelta
 
 
 def get_dataset():

@@ -9,11 +9,13 @@ def sequence_matching(seq1, seq2, max_length, eps):
     for s in temp_set:
         if seq1_in_seq2(s, seq2, eps):
             sequence_set.add(s)
-
+            
     step = 1
     while step <= max_length:
         extended_set = set()
+        i=0
         for s in sequence_set:
+            i+=1
             if len(s.get_nodes()) - 1 is step:
                 extended_set = extend_sequence(s, eps, seq1, seq2, extended_set)
         # prune_sequence effettua la potatura di sequence_set e poi unisce i due set
@@ -221,6 +223,7 @@ def prune_sequence(sequence_set, extended_set):
 
 def compute_similarity(seq, n_sp1, n_sp2):
     sim = 0
+    print("\t" + str(len(seq)) + "\t" + str(n_sp1) + "\t" + str(n_sp2))
     for s in seq:
         nodes = s.get_nodes()
         seq_sim = 0
@@ -229,5 +232,4 @@ def compute_similarity(seq, n_sp1, n_sp2):
         seq_sim = seq_sim * (2 ** (len(nodes) - 1))
         sim += seq_sim
     sim = sim / (n_sp1 * n_sp2)
-
     return sim

@@ -51,24 +51,24 @@ num_sp = get_number_of_sp_per_user(staypoints, 182)
 
 print("Calculating similarities...")
 sim=[]
-#per debugging k=147 (157)
-k = 147
+#il calcolo tra 147 e 157 è molto lungo 20 min+
+k = 0
 while k < len(seq) - 1:
     print("Comparing " + str(k) + " len: " + str(len(seq[k].get_nodes())) + " with:")
     i = 0
-    if k is 147:
-        i=156
     sim_row=[]
     while i < len(seq):
         print("\t " + str(i) + " len: " + str(len(seq[i].get_nodes())))
-        if i is not k:
-            match = sequence_matching(seq[k], seq[i], 4, 10)
-            sim_row+=[compute_similarity(match, num_sp[k], num_sp[i])]
-        else:
-            match = set()
+        if i is k:
             sim_row+=[1]
+        elif num_sp[k] == 0 or num_sp[i] == 0:#if there is no data
+            sim_row+=[0]
+        else:
+            match = sequence_matching(seq[k], seq[i], 4, 10)
+            sim_row+=[float(compute_similarity(match, num_sp[k], num_sp[i]))]
+            
         i += 1
     k += 1
-    sim+=sim_row
+    sim+=[sim_row]
     
 print(sim)

@@ -1,0 +1,60 @@
+[1110/201708.268:INFO:cefpython_app.cpp(199)] [Browser process] OnBeforeChildProcessLaunch() command line: "C:\Users\Pier\AppData\Local\Programs\Python\Python37\lib\site-packages\cefpython3\subprocess.exe" --type=gpu-process --no-sandbox --locales-dir-path="C:\Users\Pier\AppData\Local\Programs\Python\Python37\lib\site-packages\cefpython3\locales" --log-file=debug.log --log-severity=info --resources-dir-path="C:\Users\Pier\AppData\Local\Programs\Python\Python37\lib\site-packages\cefpython3" --lang=en-US --disable-gpu-shader-disk-cache /prefetch:2
+
+[1110/201708.269:INFO:cef_log.cpp(8)] [Browser process] Switch already set, ignoring: disable-gpu-shader-disk-cache
+
+[1110/201708.269:INFO:cefpython_app.cpp(199)] [Browser process] OnBeforeChildProcessLaunch() command line: "C:\Users\Pier\AppData\Local\Programs\Python\Python37\lib\site-packages\cefpython3\subprocess.exe" --type=gpu-process --no-sandbox --locales-dir-path="C:\Users\Pier\AppData\Local\Programs\Python\Python37\lib\site-packages\cefpython3\locales" --log-file=debug.log --log-severity=info --resources-dir-path="C:\Users\Pier\AppData\Local\Programs\Python\Python37\lib\site-packages\cefpython3" --lang=en-US --disable-gpu-shader-disk-cache --gpu-preferences=KAAAAAAAAACAA4CAAQAAAAAAAAAAAGAAEAAAAAAAAAAAAAAAAAAAACgAAAAEAAAAIAAAAAAAAAAoAAAAAAAAADAAAAAAAAAAOAAAAAAAAAAQAAAAAAAAAAAAAAAKAAAAEAAAAAAAAAAAAAAACwAAABAAAAAAAAAAAQAAAAoAAAAQAAAAAAAAAAEAAAALAAAA --locales-dir-path="C:\Users\Pier\AppData\Local\Programs\Python\Python37\lib\site-packages\cefpython3\locales" --log-file=debug.log --log-severity=info --resources-dir-path="C:\Users\Pier\AppData\Local\Programs\Python\Python37\lib\site-packages\cefpython3" --lang=en-US /prefetch:2
+
+[1110/201708.298:INFO:cef_log.cpp(8)] [Browser process] CreateBrowserSync() called
+
+[1110/201708.299:INFO:cef_log.cpp(8)] [Browser process] navigateUrl: file:///Map/map.html
+
+[1110/201708.299:INFO:cef_log.cpp(8)] [Browser process] CefBrowser::CreateBrowserSync()
+
+[1110/201708.303:INFO:cef_log.cpp(8)] [Browser process] GetPyBrowser(): create new PyBrowser, browserId=1
+
+[1110/201708.305:INFO:cefpython_app.cpp(199)] [Browser process] OnBeforeChildProcessLaunch() command line: "C:\Users\Pier\AppData\Local\Programs\Python\Python37\lib\site-packages\cefpython3\subprocess.exe" --type=renderer --no-sandbox --service-pipe-token=259D58D5305EDF130C96DEB365C2FB37 --lang=en-US --locales-dir-path="C:\Users\Pier\AppData\Local\Programs\Python\Python37\lib\site-packages\cefpython3\locales" --log-file=debug.log --log-severity=info --resources-dir-path="C:\Users\Pier\AppData\Local\Programs\Python\Python37\lib\site-packages\cefpython3" --disable-gpu-shader-disk-cache /prefetch:1
+
+[1110/201708.314:INFO:cef_log.cpp(8)] [Browser process] GetPyFrame(): underlying frame does not yet exist: browserId = 1, frameId = -4
+
+[1110/201708.314:INFO:cef_log.cpp(8)] [Browser process] CefBrowser::CreateBrowserSync() succeeded
+
+[1110/201708.314:INFO:cef_log.cpp(8)] [Browser process] CefBrowser window handle = 0
+
+[1110/201708.315:INFO:cef_log.cpp(8)] [Browser process] SendProcessMessage(): message=DoJavascriptBindings, arguments size=1
+
+[1110/201708.315:INFO:cef_log.cpp(8)] [Browser process] GetPyFrame(): underlying frame does not yet exist: browserId = 1, frameId = -4
+
+[1110/201708.315:INFO:cef_log.cpp(8)] [Browser process] GetPyFrame(): underlying frame does not yet exist: browserId = 1, frameId = -4
+
+[1110/201708.652:INFO:cefpython_app.cpp(368)] [Renderer process] OnProcessMessageReceived(): DoJavascriptBindings
+
+[1110/201708.659:INFO:cefpython_app.cpp(270)] [Renderer process] OnContextCreated()
+
+[1110/201708.659:INFO:cefpython_app.cpp(561)] [Renderer process] DoJavascriptBindingsForFrame(): bindings are set
+
+[1110/201708.671:INFO:client_handler.cpp(40)] [Browser process] OnProcessMessageReceived(): OnContextCreated
+
+[1110/201708.671:INFO:cef_log.cpp(8)] [Browser process] V8ContextHandler_OnContextCreated()
+
+[1110/201708.671:INFO:cef_log.cpp(8)] [Browser process] GetPyFrame(): create new PyFrame, frameId=2
+
+[1110/201709.317:INFO:cefpython_app.cpp(318)] [Renderer process] OnContextReleased()
+
+[1110/201709.322:INFO:cefpython_app.cpp(270)] [Renderer process] OnContextCreated()
+
+[1110/201709.322:INFO:cefpython_app.cpp(561)] [Renderer process] DoJavascriptBindingsForFrame(): bindings are set
+
+[1110/201709.325:INFO:cefpython_app.cpp(561)] [Renderer process] DoJavascriptBindingsForFrame(): bindings are set
+
+[1110/201709.326:INFO:cefpython_app.cpp(590)] [Renderer process] DoJavascriptBindingsForFrame(): V8 context provided by CEF is invalid
+
+[1110/201709.694:INFO:client_handler.cpp(40)] [Browser process] OnProcessMessageReceived(): OnContextReleased
+
+[1110/201709.694:INFO:cef_log.cpp(8)] [Browser process] V8ContextHandler_OnContextReleased()
+
+[1110/201709.694:INFO:cef_log.cpp(8)] [Browser process] del g_pyFrames[1#2]
+
+[1110/201709.695:INFO:client_handler.cpp(40)] [Browser process] OnProcessMessageReceived(): OnContextCreated
+
+[1110/201709.695:INFO:cef_log.cpp(8)] [Browser process] V8ContextHandler_OnContextCreated()
+

@@ -6,6 +6,7 @@ from pathlib import Path
 from Algorithms.sequence_manager import extract_sequencies
 from GUI.gui import GroupFinderApp
 
+'''
 min_pts = 2
 
 clusterable_sp_file = "File/clusterable_sp.npy"
@@ -48,6 +49,7 @@ seq = extract_sequencies(staypoints, labels)
 print("Sequencies extracted.")
 
 print(seq)
+'''
 
 if __name__ == '__main__':
     GroupFinderApp().run()

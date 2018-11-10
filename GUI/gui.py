@@ -6,6 +6,8 @@ from kivy.lang import Builder
 
 from kivymd.theming import ThemeManager
 
+from Map.map_manager import plot_map
+
 kivy.require('1.10.1')
 
 main_widget_kv = '''
@@ -46,6 +48,7 @@ main_widget_kv = '''
 #:import MDBottomNavigationItem kivymd.tabs.MDBottomNavigationItem
 #:import CEFBrowser kivy.garden.cefpython
 #:import MDFlatButton kivymd.button
+#:import MDCheckbox kivymd.selectioncontrols
 
 NavigationLayout:
     id: nav_layout
@@ -53,6 +56,10 @@ NavigationLayout:
         id: nav_drawer
         NavigationDrawerToolbar:
             title: "GroupFinder"
+        NavigationDrawerIconButton:
+            icon: 'code-braces'
+            text: 'Clustering'
+            on_release: app.root.ids.scr_mngr.current = 'clustering'
         NavigationDrawerIconButton:
             icon: 'map-marker'
             text: "Map"
@@ -73,18 +80,12 @@ NavigationLayout:
         ScreenManager:
             id: scr_mngr
             Screen:
+                name: 'clustering'
+            Screen:
                 name: 'map_scr'
                 CEFBrowser:
                     id: map_view
-                    value: 
-                    url: "file:///Map/map_start.html"
-                MDFlatButton:
-                    text: 'prova'
-                    on_release: map_view.url="file:///Map/map_update.html?lat=41.1114800&long=16.8554000"
-                MDFlatButton:
-                    text: 'prova2'
-                    on_release: map_view.url="file:///Map/map_update.html?lat=16.8554000&long=41.1114800"
-                    center_x: dp(80)
+                    url: "file:///Map/map.html"
             Screen:
                 name: 'settings'
                 ScrollView:
@@ -197,24 +198,56 @@ NavigationLayout:
                                 center_y: self.parent.center_y
                                 center_x: self.parent.width - dp(40)
                                 on_press: app.change_theme_color(self.value)
+                        TwoLineListItem:
+                            text: "Use OpenStreetMap"
+                            secondary_text: "Use maps from OpenStreetMap"
+                            on_release: osm_check.trigger_action()
+                            MDCheckbox:
+                                id: osm_check
+                                size_hint: None, None
+                                size: dp(24), dp(31)
+                                center_y: self.parent.center_y
+                                center_x: self.parent.width - dp(40)
+                                active: False
+                                callback: app.set_open_street_maps(self.active)
 '''
 
 
 class GroupFinderApp(App):
+    data = None
+    map_view = None
+    map = None
+    osm = False
     theme_cls = ThemeManager()
     window_width = 1024
     window_height = 576
     Window.size = (window_width, window_height)
 
-    @staticmethod
-    def add_mark(lat, long):
-        pass
+    def set_open_street_maps(self, value):
+        theme = ""
+        if value:
+            self.osm = True
+        else:
+            self.osm = False
+            if self.theme_cls.theme_style is 'Dark':
+                theme = "dark"
+            elif self.theme_cls.theme_style is 'Light':
+                theme = "light"
+        self.map = plot_map(theme, self.osm)
+        if self.map_view is not None:
+            self.map_view.reload()
 
     def change_theme(self, active):
         if active:
             self.theme_cls.theme_style = 'Dark'
+            self.map = plot_map("dark", self.data)
+            if self.map_view is not None and self.osm is False:
+                self.map_view.reload()
         else:
             self.theme_cls.theme_style = 'Light'
+            self.map = plot_map("light", self.data)
+            if self.map_view is not None and self.osm is False:
+                self.map_view.reload()
 
     def change_theme_color(self, color):
         if color is "blue":
@@ -247,5 +280,6 @@ class GroupFinderApp(App):
 
     def build(self):
         main_widget = Builder.load_string(main_widget_kv)
-        # self.add_mark(41.1114800, 16.8554000)
+        self.map = plot_map("light")
+        self.map_view = main_widget.ids.map_view
         return main_widget

@@ -223,7 +223,6 @@ def prune_sequence(sequence_set, extended_set):
 
 def compute_similarity(seq, n_sp1, n_sp2):
     sim = 0
-    print("\t" + str(len(seq)) + "\t" + str(n_sp1) + "\t" + str(n_sp2))
     for s in seq:
         nodes = s.get_nodes()
         seq_sim = 0

@@ -1,17 +1,16 @@
 from zipfile import *
 from Classes.entities import Point, Trajectory, User
 from Classes.side import Coordinates
+import Classes.parameters as par
 from datetime import datetime
 import os
 import re
 
 
-def get_dataset():
-    # specifying the zip file name
-    file_name = "Geolife Trajectories 1.3.zip"
+def get_dataset():    
     userlist = []
     # opening the zip file in READ mode
-    with ZipFile(file_name, 'r') as zipfile:
+    with ZipFile(par.dataset_file, 'r') as zipfile:
         # printing all the contents of the zip file
         for elem in zipfile.infolist():
             if not elem.is_dir():

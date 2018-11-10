@@ -1,5 +1,4 @@
 from math import sin, cos, asin, sqrt, radians
-from numpy import zeros
 
 #calculates the haversine distance between two points
 def haversine_distance(point_a, point_b):
@@ -13,13 +12,17 @@ def haversine_distance(point_a, point_b):
     return c * r
 
 #counts the number of staypoints for a specific user
-def get_number_of_sp_per_user(stp, num_users):
-    num_sp = zeros(num_users)
+def get_number_of_sp_per_user(stp):
+    #the total number of users is unknown
+    #but we can use the number of user_id in the staypoints as an approximation
+    num_sp=[0]
     id_user = 0
     for p in stp:
         if int(p.get_user_identifier()) is id_user:
             num_sp[id_user] += 1
         elif int(p.get_user_identifier()) > id_user:
-            id_user = int(p.get_user_identifier())
+            while int(p.get_user_identifier()) > id_user:
+                num_sp += [0]
+                id_user += 1
             num_sp[id_user] += 1
     return num_sp

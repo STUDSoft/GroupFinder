@@ -7,9 +7,8 @@ import re
 from datetime import timedelta
 
 
-def get_dataset():
+def get_dataset(file_name):
     # specifying the zip file name
-    file_name = "Geolife Trajectories 1.3.zip"
     userlist = []
     # opening the zip file in READ mode
     with ZipFile(file_name, 'r') as zipfile:

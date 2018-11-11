@@ -18,8 +18,6 @@ from kivy.animation import Animation
 from Algorithms.dataset_parser import get_dataset
 from Algorithms.staypoint_detector import staypoint_detection
 from Algorithms.clustering import hdbscan_clust
-from File.serializer import save, load
-from pathlib import Path
 from Algorithms.sequence_manager import extract_sequencies
 
 kivy.require('1.10.1')
@@ -372,7 +370,6 @@ class GroupFinderApp(App):
     sp = None
     staypoints = None
     clusterer = None
-    labels = None
     sequencies = None
 
     theme_cls = ThemeManager()
@@ -425,8 +422,9 @@ class GroupFinderApp(App):
             self.clust_progress.opacity=1
             animation = Animation(center_y=30, duration=0.25)
             animation.start(self.card)
+
             self.clustering_label.text = "Extracting dataset"
-            self.userlist = get_dataset()
+            self.userlist = get_dataset(self.dataset_file)
 
             self.clustering_label.text = "Detecting staypoints"
             self.sp, self.staypoints = staypoint_detection(self.userlist, self.dist_thresh, self.time_thresh)
@@ -434,10 +432,8 @@ class GroupFinderApp(App):
             self.clustering_label.text = "HDBSCAN clustering going on"
             self.clusterer = hdbscan_clust(self.sp, self.min_pts, 'haversine')
 
-            self.labels = self.clusterer.labels_.tolist()
-
-            print("Extracting sequencies...")
-            self.sequencies = extract_sequencies(self.staypoints, self.labels)
+            self.clustering_label.text = "Extracting sequencies"
+            self.sequencies = extract_sequencies(self.staypoints, self.clusterer.labels_.tolist())
         else:
             self.file_error.text = "Load a dataset first"
             self.file_label.text_color = get_color_from_hex("D50000")

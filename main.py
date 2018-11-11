@@ -3,7 +3,7 @@ from Algorithms.staypoint_detector import staypoint_detection
 from Algorithms.clustering import hdbscan_clust
 from File.serializer import save, load
 from pathlib import Path
-from Algorithms.sequence_manager import extract_sequencies, sequence_matching, compute_similarity
+from Algorithms.sequence_manager import extract_sequencies, calculate_similarities
 from Algorithms.point_utilities import get_number_of_sp_per_user
 import Classes.parameters as par
 
@@ -46,30 +46,4 @@ print("Sequencies extracted.")
 num_sp = get_number_of_sp_per_user(staypoints)
 
 print("Calculating similarities...")
-sim = []
-# il calcolo tra 147 e 157 è molto lungo 20 min+
-k = 0
-while k < len(seq) - 1:
-    if k is not 4:
-        k += 1
-        continue
-    print("Comparing " + str(k) + " len: " + str(len(seq[k].get_nodes())) + " with:")
-    i = 0
-    sim_row = []
-    while i < len(seq):
-        if i > 10:
-            break
-        print("\t " + str(i) + " len: " + str(len(seq[i].get_nodes())))
-        if i is k:
-            sim_row += [1]
-        elif num_sp[k] == 0 or num_sp[i] == 0:  # if there is no data
-            sim_row += [0]
-        else:
-            match = sequence_matching(seq[k], seq[i], par.max_length, par.eps)
-            sim_row += [float(compute_similarity(match, num_sp[k], num_sp[i]))]
-
-        i += 1
-    k += 1
-    sim += [sim_row]
-
-print(sim)
+sim = calculate_similarities(seq, num_sp)

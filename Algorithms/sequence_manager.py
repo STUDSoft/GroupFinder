@@ -9,13 +9,13 @@ def sequence_matching(seq1, seq2, max_length, eps):
     for s in temp_set:
         if seq1_in_seq2(s, seq2, eps):
             sequence_set.add(s)
-            
+
     step = 1
     while step <= max_length:
         extended_set = set()
-        i=0
+        i = 0
         for s in sequence_set:
-            i+=1
+            i += 1
             if len(s.get_nodes()) - 1 is step:
                 extended_set = extend_sequence(s, eps, seq1, seq2, extended_set)
         # prune_sequence effettua la potatura di sequence_set e poi unisce i due set
@@ -28,25 +28,25 @@ def extract_sequencies(staypoints, clusters):
     sequencies = []
     for i in range(len(staypoints)):
         pos = get_user_seq_pos(sequencies, staypoints[i].get_user_identifier())
-        if pos is None:#if the user does not have a sequence in the array, it is created
+        if pos is None:  # if the user does not have a sequence in the array, it is created
             new_user_seq = Sequence(staypoints[i].get_user_identifier())
-            if clusters[i] is not -1:#checks for noise
+            if clusters[i] is not -1:  # checks for noise
                 node = Node(clusters[i], 0, 1, staypoints[i].get_leav_time())
                 new_user_seq.add_node(node)
             sequencies.append(new_user_seq)
         else:
-            if sequencies[pos].has_nodes():#a user can have a sequence with no nodes
+            if sequencies[pos].has_nodes():  # a user can have a sequence with no nodes
                 if clusters[i] is sequencies[pos].get_latest_node().get_clust_id():
                     sequencies[pos].get_latest_node().add_staypoint()
                     sequencies[pos].get_latest_node().set_leav_time(staypoints[i].get_leav_time())
                 else:
-                    if clusters[i] is not -1:#checks for noise
+                    if clusters[i] is not -1:  # checks for noise
                         time_diff = staypoints[i].get_arv_time() - sequencies[pos].get_latest_node().get_leav_time()
                         time_diff_in_hours = time_diff.total_seconds() / 3600
                         node = Node(clusters[i], time_diff_in_hours, 1, staypoints[i].get_leav_time())
                         sequencies[pos].add_node(node)
             else:
-                if clusters[i] is not -1:#checks for noise
+                if clusters[i] is not -1:  # checks for noise
                     node = Node(clusters[i], 0, 1, staypoints[i].get_leav_time())
                     sequencies[pos].add_node(node)
     return sequencies
@@ -70,7 +70,7 @@ def one_length_seq_set(seq):
     for i in range(len(nodes) - 1):
         node = nodes[i]
         j = i + 1
-        if(j < len(nodes)):
+        if (j < len(nodes)):
             tot_time = nodes[j].get_time_to()
         while j < len(nodes):
             node_j = Node(nodes[j].get_clust_id(), tot_time, nodes[j].get_num_staypoints(), nodes[j].get_leav_time())
@@ -97,9 +97,9 @@ def seq1_in_seq2(seq1, seq2, eps):
             minimum += [int(min(node_s1[0].get_num_staypoints(), node_s2[n].get_num_staypoints()))]
             while j < len(node_s1) and not b1:
                 k = n + 1
-                if(k < len(node_s2)):
+                if (k < len(node_s2)):
                     tot_time = node_s2[k].get_time_to()
-    
+
                     while k < len(node_s2) and not b1:
                         if node_s2[k].get_clust_id() is node_s1[j].get_clust_id() and eps >= abs(
                                 tot_time - node_s1[j].get_time_to()):
@@ -150,9 +150,9 @@ def extend_sequence(seq, eps, seq1, seq2, extended_set):
             n = i  # n e' da quale punto cercare il nodo successivo
             while j < len(nodes_seq) and not b1:
                 k = n + 1
-                if(k < len(nodes_seq1)):
+                if (k < len(nodes_seq1)):
                     tot_time = nodes_seq1[k].get_time_to()
-    
+
                     while k < len(nodes_seq1) and not b1:
                         if nodes_seq1[k].get_clust_id() is nodes_seq[j].get_clust_id() and eps >= abs(
                                 tot_time - nodes_seq[j].get_time_to()):
@@ -174,9 +174,9 @@ def extend_sequence(seq, eps, seq1, seq2, extended_set):
             if j is len(nodes_seq):
                 # espandi la sequenza seq
                 n += 1
-                if(n < len(nodes_seq1)):
+                if (n < len(nodes_seq1)):
                     tot_time = nodes_seq1[n].get_time_to()
-    
+
                     while n < len(nodes_seq1):
                         # copia seq
                         exp_seq = Sequence()
@@ -231,4 +231,32 @@ def compute_similarity(seq, n_sp1, n_sp2):
         seq_sim = seq_sim * (2 ** (len(nodes) - 1))
         sim += seq_sim
     sim = sim / (n_sp1 * n_sp2)
+    return sim
+
+
+def calculate_similarities(seq, num_sp):
+    sim = []
+    # il calcolo tra 147 e 157 è molto lungo 20 min+
+    k = 0
+    while k < len(seq) - 1:
+        if k is not 4:
+            k += 1
+            continue
+        i = 0
+        sim_row = []
+        while i < len(seq):
+            if i > 10:
+                break
+            if i is k:
+                sim_row += [1]
+            elif num_sp[k] == 0 or num_sp[i] == 0:  # if there is no data
+                sim_row += [0]
+            else:
+                match = sequence_matching(seq[k], seq[i], par.max_length, par.eps)
+                sim_row += [float(compute_similarity(match, num_sp[k], num_sp[i]))]
+
+            i += 1
+        k += 1
+        sim += [sim_row]
+
     return sim

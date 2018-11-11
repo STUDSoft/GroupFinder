@@ -1,5 +1,7 @@
 import kivy
 
+import threading
+
 import tkinter as tk
 from tkinter import filedialog
 import os
@@ -198,7 +200,7 @@ NavigationLayout:
                 MDCard:
                     id: card
                     size_hint: None, None
-                    size: dp(350), dp(45)
+                    size: dp(250), dp(45)
                     center_x: self.parent.width / 2
                     center_y: - 35
                     BoxLayout:
@@ -417,23 +419,39 @@ class GroupFinderApp(App):
                 tf.helper_text = "Insert a number"
                 tf.error = True
 
+    def worker(self):
+        self.clustering_label.text = "Extracting dataset"
+        self.userlist = get_dataset(self.dataset_file)
+
+        self.clustering_label.text = "Detecting staypoints"
+        self.sp, self.staypoints = staypoint_detection(self.userlist, self.dist_thresh, self.time_thresh)
+
+        self.clustering_label.text = "HDBSCAN clustering going on"
+        self.clusterer = hdbscan_clust(self.sp, self.min_pts, 'haversine')
+
+        self.clustering_label.text = "Extracting sequencies"
+        self.sequencies = extract_sequencies(self.staypoints, self.clusterer.labels_.tolist())
+
     def start_clustering(self):
         if self.dataset_file is not "":
-            self.clust_progress.opacity=1
+            self.clust_progress.opacity = 1
             animation = Animation(center_y=30, duration=0.25)
             animation.start(self.card)
 
+            threading.Thread(target=self.worker).start()
+            '''
             self.clustering_label.text = "Extracting dataset"
-            self.userlist = get_dataset(self.dataset_file)
+            # self.userlist = get_dataset(self.dataset_file)
 
             self.clustering_label.text = "Detecting staypoints"
-            self.sp, self.staypoints = staypoint_detection(self.userlist, self.dist_thresh, self.time_thresh)
+            # self.sp, self.staypoints = staypoint_detection(self.userlist, self.dist_thresh, self.time_thresh)
 
             self.clustering_label.text = "HDBSCAN clustering going on"
-            self.clusterer = hdbscan_clust(self.sp, self.min_pts, 'haversine')
+            # self.clusterer = hdbscan_clust(self.sp, self.min_pts, 'haversine')
 
             self.clustering_label.text = "Extracting sequencies"
-            self.sequencies = extract_sequencies(self.staypoints, self.clusterer.labels_.tolist())
+            # self.sequencies = extract_sequencies(self.staypoints, self.clusterer.labels_.tolist())
+            '''
         else:
             self.file_error.text = "Load a dataset first"
             self.file_label.text_color = get_color_from_hex("D50000")

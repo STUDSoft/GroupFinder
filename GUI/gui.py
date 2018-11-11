@@ -372,6 +372,8 @@ class GroupFinderApp(App):
     sp = None
     staypoints = None
     clusterer = None
+    labels = None
+    sequencies = None
 
     theme_cls = ThemeManager()
     window_width = 1024
@@ -431,6 +433,11 @@ class GroupFinderApp(App):
 
             self.clustering_label.text = "HDBSCAN clustering going on"
             self.clusterer = hdbscan_clust(self.sp, self.min_pts, 'haversine')
+
+            self.labels = self.clusterer.labels_.tolist()
+
+            print("Extracting sequencies...")
+            self.sequencies = extract_sequencies(self.staypoints, self.labels)
         else:
             self.file_error.text = "Load a dataset first"
             self.file_label.text_color = get_color_from_hex("D50000")

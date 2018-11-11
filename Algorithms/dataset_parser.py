@@ -7,7 +7,7 @@ import os
 import re
 
 
-def get_dataset():    
+def get_dataset(file_name):
     userlist = []
     # opening the zip file in READ mode
     with ZipFile(par.dataset_file, 'r') as zipfile:

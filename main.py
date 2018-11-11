@@ -1,3 +1,9 @@
+
+from GUI.gui import GroupFinderApp
+
+if __name__ == '__main__':
+    GroupFinderApp().run()
+    
 from Algorithms.dataset_parser import get_dataset
 from Algorithms.staypoint_detector import staypoint_detection
 from Algorithms.clustering import hdbscan_clust

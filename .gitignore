@@ -1,4 +1,6 @@
 *.zip
 .idea
-.spyproject
 __pycache__
+*.html
+*.htm
+debug.log

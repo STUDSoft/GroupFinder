@@ -46,4 +46,4 @@ print("Sequencies extracted.")
 num_sp = get_number_of_sp_per_user(staypoints)
 
 print("Calculating similarities...")
-sim = calculate_similarities(seq, num_sp)
+sim = calculate_similarities(seq, num_sp, par.max_length, par.eps)

@@ -67,10 +67,11 @@ def get_user_seq_pos(sequencies, user_id):
 def one_length_seq_set(seq):
     sequence_set = set()
     nodes = seq.get_nodes()
+    tot_time = None
     for i in range(len(nodes) - 1):
         node = nodes[i]
         j = i + 1
-        if (j < len(nodes)):
+        if j < len(nodes):
             tot_time = nodes[j].get_time_to()
         while j < len(nodes):
             node_j = Node(nodes[j].get_clust_id(), tot_time, nodes[j].get_num_staypoints(), nodes[j].get_leav_time())
@@ -150,7 +151,7 @@ def extend_sequence(seq, eps, seq1, seq2, extended_set):
             n = i  # n e' da quale punto cercare il nodo successivo
             while j < len(nodes_seq) and not b1:
                 k = n + 1
-                if (k < len(nodes_seq1)):
+                if k < len(nodes_seq1):
                     tot_time = nodes_seq1[k].get_time_to()
 
                     while k < len(nodes_seq1) and not b1:
@@ -234,7 +235,7 @@ def compute_similarity(seq, n_sp1, n_sp2):
     return sim
 
 
-def calculate_similarities(seq, num_sp):
+def calculate_similarities(seq, num_sp, max_length, eps):
     sim = []
     # il calcolo tra 147 e 157 è molto lungo 20 min+
     k = 0
@@ -252,7 +253,7 @@ def calculate_similarities(seq, num_sp):
             elif num_sp[k] == 0 or num_sp[i] == 0:  # if there is no data
                 sim_row += [0]
             else:
-                match = sequence_matching(seq[k], seq[i], par.max_length, par.eps)
+                match = sequence_matching(seq[k], seq[i], max_length, eps)
                 sim_row += [float(compute_similarity(match, num_sp[k], num_sp[i]))]
 
             i += 1

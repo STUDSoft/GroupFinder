@@ -136,7 +136,7 @@ class StayPoint(Point):
 
 
 class Sequence(object):
-    def __init__(self, user_id = None):
+    def __init__(self, user_id=None):
         self.__nodes = []
         self.__user_id = user_id
 

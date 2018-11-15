@@ -49,6 +49,12 @@ class Trajectory(object):
     def get_pointlist(self):
         return self.__pointlist
 
+    def get_coord_pointlist(self):
+        ptl = []
+        for p in self.__pointlist:
+            ptl.append((p.get_latitude(), p.get_longitude()))
+        return ptl
+
     def set_pointlist(self, pointlist):
         self.__pointlist = pointlist
 

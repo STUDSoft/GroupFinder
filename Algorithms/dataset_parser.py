@@ -1,16 +1,15 @@
 from zipfile import *
 from Classes.entities import Point, Trajectory, User
 from Classes.side import Coordinates
-import Classes.parameters as par
 from datetime import datetime
 import os
 import re
 
 
-def get_dataset(file_name):
+def get_dataset(dataset_file):
     userlist = []
     # opening the zip file in READ mode
-    with ZipFile(par.dataset_file, 'r') as zipfile:
+    with ZipFile(dataset_file, 'r') as zipfile:
         # printing all the contents of the zip file
         for elem in zipfile.infolist():
             if not elem.is_dir():

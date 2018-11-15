@@ -7,7 +7,9 @@ import numpy as np
 def staypoint_detection(userlist, dist_threh, time_threh):
     sp = []
     staypoints = []
+    num_sp_per_user = []
     for user in userlist:
+        cont = 0
         trajectorylist = user.get_trajectorylist()
         for trajectory in trajectorylist:
             p = trajectory.get_pointlist()
@@ -26,11 +28,13 @@ def staypoint_detection(userlist, dist_threh, time_threh):
                             s = np.array(s)
                             sp.append(s)
                             staypoints.append(stp)
+                            cont += 1
                         i = j
                         break
                     j += 1
                 i += 1
-    return np.array(sp), staypoints
+        num_sp_per_user.append(cont)
+    return np.array(sp), staypoints, num_sp_per_user
 
 
 def compute_mean_coord(p, i, j):

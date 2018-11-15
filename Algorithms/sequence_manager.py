@@ -98,7 +98,7 @@ def seq1_in_seq2(seq1, seq2, eps):
             minimum += [int(min(node_s1[0].get_num_staypoints(), node_s2[n].get_num_staypoints()))]
             while j < len(node_s1) and not b1:
                 k = n + 1
-                if (k < len(node_s2)):
+                if k < len(node_s2):
                     tot_time = node_s2[k].get_time_to()
 
                     while k < len(node_s2) and not b1:
@@ -229,7 +229,7 @@ def compute_similarity(seq, n_sp1, n_sp2):
         seq_sim = 0
         for n in nodes:
             seq_sim += n.get_num_staypoints()
-        seq_sim = seq_sim * (2 ** (len(nodes) - 1))
+        seq_sim = seq_sim * (2 ** ((len(nodes) - 1) - 1))  # il moltiplicatore e' 2(len-1)
         sim += seq_sim
     sim = sim / (n_sp1 * n_sp2)
     return sim
@@ -239,15 +239,10 @@ def calculate_similarities(seq, num_sp, max_length, eps):
     sim = []
     # il calcolo tra 147 e 157 è molto lungo 20 min+
     k = 0
-    while k < len(seq) - 1:
-        if k is not 4:
-            k += 1
-            continue
+    while k < len(num_sp):
         i = 0
         sim_row = []
-        while i < len(seq):
-            if i > 10:
-                break
+        while i < len(num_sp):
             if i is k:
                 sim_row += [1]
             elif num_sp[k] == 0 or num_sp[i] == 0:  # if there is no data
@@ -255,7 +250,6 @@ def calculate_similarities(seq, num_sp, max_length, eps):
             else:
                 match = sequence_matching(seq[k], seq[i], max_length, eps)
                 sim_row += [float(compute_similarity(match, num_sp[k], num_sp[i]))]
-
             i += 1
         k += 1
         sim += [sim_row]

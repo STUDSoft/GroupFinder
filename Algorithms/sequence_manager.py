@@ -237,20 +237,39 @@ def compute_similarity(seq, n_sp1, n_sp2):
 
 def calculate_similarities(seq, num_sp, max_length, eps):
     sim = []
-    # il calcolo tra 147 e 157 è molto lungo 20 min+
-    k = 0
+    k = 0  # usato per ciclare sugli utenti nel while esterno
+    k_seq = 0  # usato per ciclare sulle sequenze nel while esterno
     while k < len(num_sp):
-        i = 0
+        i = 0  # usato per ciclare sugli utenti nel while interno
+        i_seq = 0  # usato per ciclare sulle sequenze nel while interno
         sim_row = []
-        while i < len(num_sp):
-            if i is k:
-                sim_row += [1]
-            elif num_sp[k] == 0 or num_sp[i] == 0:  # if there is no data
-                sim_row += [0]
-            else:
-                match = sequence_matching(seq[k], seq[i], max_length, eps)
-                sim_row += [float(compute_similarity(match, num_sp[k], num_sp[i]))]
-            i += 1
+        # controlla che k abbia una sequenza
+        if k == int(seq[k_seq].get_user_id()):
+            while i < len(num_sp):
+                if i is k:  # un utente ha similarita 1 con se stesso
+                    sim_row += [-1]
+                    if i == int(seq[i_seq].get_user_id()):
+                        i_seq += 1
+                else:
+                    # controlla che i abbia una sequenza
+                    if i == int(seq[i_seq].get_user_id()):
+                        # se ha una sequenza calcola la similarita
+                        match = sequence_matching(seq[k_seq], seq[i_seq], max_length, eps)
+                        sim_row += [float(compute_similarity(match, num_sp[k], num_sp[i]))]
+                        i_seq += 1  # i_seq si incrementa solo se k aveva una sequenza
+                    else:
+                        # se i non ha una sequenza la similarita sara' 0
+                        sim_row += [0]
+                i += 1
+            k_seq += 1  # k_seq si incrementa solo se k aveva una sequenza
+        else:
+            # se k non ha una sequenza avra tutte le similarita a zero, tranne la sua
+            while i < len(num_sp):
+                if i is k:
+                    sim_row += [-1]
+                else:
+                    sim_row += [0]
+                i += 1
         k += 1
         sim += [sim_row]
 

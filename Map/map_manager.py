@@ -23,14 +23,18 @@ def plot_map(theme="light", osm=False):
     return folium_map
 
 
-def add_users_positions(current_map, userlist):
-    if userlist is not None:
-        for user in userlist:
-            r = lambda: random.randint(0, 255)
-            color = str('#%02X%02X%02X' % (r(), r(), r()))
-            for traj in user.get_trajectorylist():
-                folium.PolyLine(traj.get_coord_pointlist(), color=color, weight=3, opacity=1).add_to(current_map)
-
-        current_map.save("Map/map.html")
-
-    return current_map
+def add_users_positions(current_map, id, userlist, similarities, sim_value):
+    if userlist is not None and similarities is not None:
+        for u in userlist:
+            sim = float(similarities[int(id)][int(u.get_identifier())])
+            if sim >= float(sim_value):
+                r = lambda: random.randint(0, 255)
+                color = str('#%02X%02X%02X' % (r(), r(), r()))
+                for traj in u.get_trajectorylist():
+                    folium.PolyLine(traj.get_coord_pointlist(), color=color, weight=1.5, opacity=1,
+                                    popup="<b>User " + str(u.get_identifier()) + "</b><br>Similarity with User " + str(
+                                        id) + ": " + str(sim)).add_to(current_map)
+        for traj in userlist[int(id)].get_trajectorylist():
+            folium.PolyLine(traj.get_coord_pointlist(), color="red", weight=0.5, opacity=1,
+                            popup="<b>User " + str(id) + "</b>").add_to(current_map)
+    current_map.save("Map/map.html")

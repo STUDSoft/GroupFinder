@@ -10,9 +10,6 @@ from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
 
-from kivy.uix.scrollview import ScrollView
-
-from kivymd.bottomsheet import MDListBottomSheet
 from kivymd.theming import ThemeManager
 
 from Map.map_manager import plot_map, add_users_positions
@@ -26,10 +23,6 @@ from Algorithms.clustering import hdbscan_clust
 from Algorithms.sequence_manager import extract_sequencies, calculate_similarities
 
 from kivymd.snackbar import Snackbar
-from kivymd.label import MDLabel
-from kivymd.dialog import MDDialog
-from kivymd.list import MDList, OneLineListItem
-from kivymd.selectioncontrols import MDCheckbox
 
 kivy.require('1.10.1')
 
@@ -211,17 +204,36 @@ NavigationLayout:
                     id: map_view
                     url: "file:///Map/map.html"
                 MDCard:
+                    id: user_choosed_card
+                    size_hint: None, None
+                    size: dp(85), dp(35)
+                    center_x: self.parent.width + 60
+                    center_y: self.parent.height - 30
+                    border_radius: dp(10)
+                    elevation: 2
+                    BoxLayout:
+                        padding: 12
+                        MDLabel:
+                            id: user_choosed
+                            text: ""
+                            halign: "center"
+                            valign: "center"
+                            markup: True
+                            theme_text_color: 'Custom'
+                            font_style:"Body2"
+                MDCard:
                     id: users_card
                     size: self.parent.width, self.parent.height
                     border_radius: dp(10)
                     y: -self.height + 45
+                    elevation: 5
                     BoxLayout:
                         id: layout_user
                         orientation:'vertical'
                         padding: dp(20), dp(4), dp(20), dp(4)
                         spacing: 5
                         MDLabel:
-                            text: 'Title'
+                            text: 'Users'
                             theme_text_color: 'Primary'
                             font_style:"Title"
                             size_hint_y: None
@@ -401,6 +413,7 @@ NavigationLayout:
                 center_x: root.width/2
                 center_y: -35
                 border_radius: dp(10)
+                elevation: 9
                 BoxLayout:
                     id: clust_progress
                     padding: 12
@@ -412,7 +425,7 @@ NavigationLayout:
                         size: dp(25), dp(25)
                     MDLabel:
                         id: clustering_label
-                        font_style: 'Body1'
+                        font_style: 'Body2'
                         theme_text_color: 'Primary'
 '''
 
@@ -428,6 +441,8 @@ class GroupFinderApp(App):
     card = None
     clust_progress = None
     clustering_label = None
+    user_choosed_card = None
+    user_choosed = None
 
     dist_thresh = 200
     time_thresh = 30
@@ -451,6 +466,10 @@ class GroupFinderApp(App):
     users_card = None
     label_user = None
     layout_user = None
+    slider = None
+
+    thrd = None
+    legend = False
 
     theme_cls = ThemeManager()
     window_width = 1024
@@ -508,7 +527,8 @@ class GroupFinderApp(App):
         self.user_list.clear_widgets()
 
         self.clustering_label.text = "Detecting staypoints"
-        self.sp, self.staypoints, self.num_sp_per_user = staypoint_detection(self.userlist, self.dist_thresh, self.time_thresh)
+        self.sp, self.staypoints, self.num_sp_per_user = staypoint_detection(self.userlist, self.dist_thresh,
+                                                                             self.time_thresh)
 
         self.clustering_label.text = "HDBSCAN clustering going on"
         self.clusterer = hdbscan_clust(self.sp, self.min_pts, 'haversine')
@@ -521,25 +541,12 @@ class GroupFinderApp(App):
                                                    self.max_length,
                                                    self.eps)
 
-        self.clustering_label.text = "Building map"
-        self.map = add_users_positions(self.map, self.userlist)
-        self.map_view.reload()
-
         for u in self.userlist:
             list_item = '''
 OneLineListItem:
     text: "User ''' + str(u.get_identifier()) + '''"
-    on_release: User_''' + str(u.get_identifier()) + '''.trigger_action()
-    MDCheckbox:
-        id: User_''' + str(u.get_identifier()) + '''
-        size_hint: None, None
-        size: dp(31), dp(31)
-        name: "''' + str(u.get_identifier()) + '''"
-        center_y: self.parent.center_y
-        center_x: self.parent.width - dp(35)
-        active: False
-        group: "users"
-        callback: app.plot_map(self.name, self.active)
+    name: "''' + str(u.get_identifier()) + '''"
+    on_release: app.plot_map(self.name)
 '''
             self.user_list.add_widget(Builder.load_string(list_item))
 
@@ -551,7 +558,8 @@ OneLineListItem:
         if self.can_press is True:
             if self.dataset_file is not None:
                 self.can_press = False
-                threading.Thread(target=self.worker).start()
+                self.thrd = threading.Thread(target=self.worker)
+                self.thrd.start()
             else:
                 self.file_error.text = "Load a dataset first"
                 self.file_label.text_color = get_color_from_hex("D50000")
@@ -583,7 +591,7 @@ OneLineListItem:
             self.map_view.reload()
 
     def show_users_menu(self):
-        if self.userlist is not None:
+        if self.similarities is not None:
             if self.user_card_opened:
                 animation = Animation(y=-self.users_card.height + 45, duration=0.25)
                 animation.start(self.users_card)
@@ -597,9 +605,40 @@ OneLineListItem:
         else:
             self.error_message("Similarities not extracted")
 
-    def plot_map(self, id, active):
-        if active:
-            print("User " + str(id))
+    def map_worker(self, id_user):
+        thm = ""
+        if self.theme_cls.theme_style is 'Dark':
+            thm = "dark"
+        elif self.theme_cls.theme_style is 'Light':
+            thm = "light"
+        if self.user_card_opened:
+            animation = Animation(y=-self.users_card.height + 45, duration=0.25)
+            animation.start(self.users_card)
+            self.user_card_opened = False
+            self.users_button.icon = "arrow-up"
+        animation = Animation(center_y=40, duration=0.25)
+        animation.start(self.card)
+        self.clustering_label.text = "Building map"
+        self.map = plot_map(thm, self.osm)
+        add_users_positions(self.map, id_user, self.userlist, self.similarities, self.slider.value)
+        self.map_view.reload()
+        self.user_choosed.text = '[color=fe0000]User ' + str(id_user) + '[/color]'
+        if not self.legend:
+            animation = Animation(center_x=self.map_scr.width - 55, duration=0.25)
+            animation.start(self.user_choosed_card)
+            self.legend = True
+        animation = Animation(center_y=-35, duration=0.25)
+        animation.start(self.card)
+        self.can_press = True
+
+    def plot_map(self, id_user):
+        if self.similarities is not None:
+            if self.can_press is True:
+                self.can_press = False
+                self.thrd = threading.Thread(target=self.map_worker, args=(id_user,))
+                self.thrd.start()
+            else:
+                self.error_message("Already building map")
 
     @staticmethod
     def error_message(message):
@@ -661,6 +700,9 @@ OneLineListItem:
         self.users_card = main_widget.ids.users_card
         self.label_user = main_widget.ids.label_no_users
         self.layout_user = main_widget.ids.layout_user
+        self.slider = main_widget.ids.hslider
+        self.user_choosed_card = main_widget.ids.user_choosed_card
+        self.user_choosed = main_widget.ids.user_choosed
         return main_widget
 
     def on_stop(self):

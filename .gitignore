@@ -4,5 +4,4 @@ __pycache__
 *.html
 *.htm
 debug.log
-.npy
 .spyproject
